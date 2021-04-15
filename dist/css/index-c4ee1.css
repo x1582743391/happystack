@@ -30,6 +30,11 @@
   font-size: 4rem;
   color: greenyellow;
 }
+#github {
+  z-index: 999;
+  position: absolute;
+  margin: 20px;
+}
 #gg {
   display: none;
   justify-content: center;
