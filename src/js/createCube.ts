@@ -2,10 +2,11 @@
 import * as THREE from 'three';
 import { Tween } from '@tweenjs/tween.js'
 import { CubeProperty, XYZObj } from './interfaceAndClass'
-import { Box3, Vector3 } from 'three';
+import { Box3, SpotLight, Vector3 } from 'three';
 let tween: Tween<XYZObj>;//记录当前点击时需要暂停的动画
 let _scen: THREE.Scene
 let _camera: THREE.Camera
+let _SpotLight:SpotLight
 let lookAt: Vector3 = new Vector3(0, 4, 0);
 
 let isStart: number = 0
@@ -76,10 +77,12 @@ let ctr = (function () {
 				let _cameraPos = { y: 0 }
 				let o_y = _camera.position.y
 				let l_y = lookAt.y
+				let light_y=_SpotLight.position.y
 				let tween = new Tween(_cameraPos).to({ y: cubeSize.y }, time / 4)
 					.onUpdate(() => {
 						_camera.position.y = o_y + _cameraPos.y
 						lookAt.y = l_y + _cameraPos.y;
+						_SpotLight.position.y=light_y+ _cameraPos.y;
 						_camera.lookAt(lookAt)
 					})
 				tween.start()
@@ -273,9 +276,10 @@ function ggGame() {
 	ggtext.textContent = '最后得分：' + score	
 	ggbox.style.display='flex'
 }
-export function createGame(scene: THREE.Scene, camera: THREE.Camera) {
+export function createGame(scene: THREE.Scene, camera: THREE.Camera,light:THREE.SpotLight) {
 	_scen = scene;
 	_camera = camera;
+	_SpotLight=light
 
 }
 

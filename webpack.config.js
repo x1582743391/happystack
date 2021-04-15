@@ -9,7 +9,7 @@ module.exports = {
     output: {
         filename: 'js/[name]-[hash:5].js',
         path: resolve(__dirname, 'dist'),
-        assetModuleFilename:'assets/[name]-[hash:5][ext][query]',
+        assetModuleFilename:'assets/[name][ext][query]',
         clean: true
     },
     // webpack-dev-server need webpack-dev-server plugin

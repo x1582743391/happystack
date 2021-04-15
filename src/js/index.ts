@@ -31,7 +31,7 @@ var spotLight = new THREE.SpotLight(0xffffff);
 spotLight.position.set(-10, 20, -5);
 spotLight.castShadow = true;
 scene.add(spotLight);
-createGame(scene,camera)
+createGame(scene,camera,spotLight)
 // add the output of the renderer to the html element
 document.getElementById("webgl-output").appendChild(renderer.domElement);
 render()
@@ -42,5 +42,6 @@ function render() {
 	TWEEN.update()
 	renderer.render(scene, camera);
 	camera.updateMatrix()
+	spotLight.updateMatrix()
 }
 
