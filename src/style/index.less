@@ -1,0 +1,70 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+#gg,
+#mask {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#mask {
+  background-color: rgba(255, 255, 255, 0.247);
+  z-index: 10;
+  text-align: center;
+  font-size: 60px;
+  line-height: 100vh;
+  color: white;
+}
+
+#score {
+  position: fixed;
+  right: 20px;
+  top: 10px;
+  width: 200px;
+  height: 200px;
+  z-index: 2;
+  text-align: center;
+  line-height: 200px;
+  font-size: 4rem;
+  color: greenyellow;
+
+}
+
+#gg {
+	display: none;
+	justify-content: center;
+	align-items: center;
+	z-index: 44;
+	.ggbox{
+		width: 50%;
+		max-width: 400px;
+		height: 20%;
+		max-height: 200px;
+		border-radius: 30px;
+		background-color: white;
+		font-size: 25px;
+		padding: 10px;
+		position: relative;
+		font-weight: 300;
+		padding-top: 20px;
+		padding-left: 30px;
+		
+		.btn{
+			position: absolute;
+			bottom: 20px;
+			right: 20px;
+			background-color: #a0d2b9;
+			padding: 10px;
+			color: white;
+			font-size: 25px;
+			border-radius: 10px;
+			cursor: pointer;
+
+		}
+	}
+}
+
