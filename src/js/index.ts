@@ -12,7 +12,8 @@ const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(10, window.i
 
 // create a render and set the size
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
-renderer.setClearColor(new THREE.Color(0x000000));
+renderer.setClearColor(new THREE.Color('0xffffff'));
+renderer.setClearAlpha(0.1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 

@@ -2,7 +2,8 @@
 import * as THREE from 'three';
 import { Tween } from '@tweenjs/tween.js'
 import { CubeProperty, XYZObj } from './interfaceAndClass'
-import { Box3, SpotLight, Vector3 } from 'three';
+import { Box3, Mesh, SpotLight, Vector3 } from 'three';
+import {getGradientColor,addMusic} from './utils'
 let tween: Tween<XYZObj>;//记录当前点击时需要暂停的动画
 let _scen: THREE.Scene
 let _camera: THREE.Camera
@@ -49,6 +50,7 @@ let ctr = (function () {
 	let flag: boolean = false;
 	let cubeQuque: THREE.Mesh[] = [];//储存顶部的立方体
 	function dfs(pos: XYZObj, cubeSize: CubeProperty): void {
+		cubeSize.color=getGradientColor();
 		//创建第一层
 		if (cubeQuque.length == 0) {
 			cubeQuque.push(createCubeAddSecen(pos, cubeSize));
@@ -72,8 +74,9 @@ let ctr = (function () {
 				ggGame()
 				return
 			}
+
 			ctr.apply(null, isOk);
-			if (cubeQuque[cubeQuque.length - 1].position.y - lookAt.y > 1) {
+			if (cubeQuque[cubeQuque.length - 1].position.y - lookAt.y > 0) {
 				let _cameraPos = { y: 0 }
 				let o_y = _camera.position.y
 				let l_y = lookAt.y
@@ -234,16 +237,20 @@ function getCubeSize(cube: THREE.Mesh): THREE.Vector3 {
 function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: THREE.Mesh[]): [XYZObj, CubeProperty] | boolean {
 	let key = cubesize.dir;
 	let peekPos: THREE.Vector3 = cubeQuque[cubeQuque.length - 2].position;
-	_scen.remove(cubeQuque.pop());
 	let w: number = cubesize[key] / 2;
-	// debugger
 	let distanceDiff: number = pos[key] - peekPos[key];
 	if (distanceDiff < 0) {
 		w = -w;
 	}
-	if (distanceDiff == 0) return [pos, cubesize]//两个方块完美重叠
+	if (Math.abs(distanceDiff) <0.15) {
+		//两个方块完美重叠
+		let peek:Mesh=cubeQuque[cubeQuque.length-1];
+		peek.position[cubesize.dir]=peekPos[cubesize.dir]
+		return [new XYZObj(peek.position.x,peek.position.y,peek.position.z), cubesize]
+	}
+	_scen.remove(cubeQuque.pop());
 	if (Math.abs(distanceDiff) >= cubesize[key]) return false;//两个方块不相交
-
+	addMusic()
 	//  交叉 (x1+x2)/2
 	// 多余的部分 (x1+x2)/2  +(-) w  由新cube与旧cube相对位置决定
 
@@ -276,11 +283,13 @@ function ggGame() {
 	ggtext.textContent = '最后得分：' + score	
 	ggbox.style.display='flex'
 }
+
 export function createGame(scene: THREE.Scene, camera: THREE.Camera,light:THREE.SpotLight) {
 	_scen = scene;
 	_camera = camera;
 	_SpotLight=light
 
 }
+
 
 
