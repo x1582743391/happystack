@@ -4,6 +4,7 @@ import { Tween } from '@tweenjs/tween.js'
 import { CubeProperty, XYZObj } from './interfaceAndClass'
 import { Box3, Mesh, SpotLight, Vector3 } from 'three';
 import { getGradientColor, addMusic } from './utils'
+
 let tween: Tween<XYZObj>;//记录当前点击时需要暂停的动画
 let _scen: THREE.Scene
 let _camera: THREE.Camera
@@ -31,7 +32,7 @@ mask.addEventListener('mousedown', (event: any) => {
 	event = event || window.event;
 	if (event.buttons == 1) {
 		if (isStart++ == 0) {
-			addMusic('/assets/canon.mp3',true,.8)
+			addMusic(require('/assets/canon.mp3'),true,.8)
 			let originPositionParam: XYZObj = new XYZObj(0, 0, 0)
 			let originCubeProperty: CubeProperty = new CubeProperty(3, 1, 3, 'z')
 			ctr(originPositionParam, originCubeProperty)
@@ -244,7 +245,7 @@ function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: THREE.Mesh[])
 		w = -w;
 	}
 	if (Math.abs(distanceDiff) < 0.15) {
-		addMusic('/assets/great.mp3', false, 1, function () {
+		addMusic(require('/assets/great.mp3'), false, 1, function () {
 			document.body.removeChild(this)
 		})
 		//两个方块完美重叠
@@ -254,7 +255,7 @@ function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: THREE.Mesh[])
 	}
 	_scen.remove(cubeQuque.pop());
 	if (Math.abs(distanceDiff) >= cubesize[key]) return false;//两个方块不相交
-	addMusic('/assets/down.mp3', false, 1, function () {
+	addMusic(require('/assets/down.mp3'), false, 1, function () {
 		document.body.removeChild(this)
 	})
 	//  交叉 (x1+x2)/2

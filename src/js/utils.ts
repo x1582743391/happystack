@@ -8,7 +8,6 @@ export let getGradientColor = (
 		let i = 0
 		return function (): string {
 			let ans='#' + Number((i++ % t) * change + start).toString(16)
-			console.log(ans,change)
 			return ans
 		}
 	}
