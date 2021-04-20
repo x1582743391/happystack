@@ -13,17 +13,19 @@ export let getGradientColor = (
 		}
 	}
 )()
-export function addMusic(){
+export function addMusic(url:string,loop:boolean=false,volume:number=0.3,endCB?:Function){
 	let id = Math.random() + ''
 	let ele = <HTMLAudioElement> document.createElement('audio')
 	ele.id = id
-	ele.src = '/assets/down.mp3'
-	ele.loop = false
-	ele.volume = 0.3
+	ele.src = url
+	ele.loop = loop
+	ele.volume = volume
 	ele.preload = 'auto'
 	ele.autoplay = true
-	ele.addEventListener('ended', () => {
-		document.body.removeChild(ele)
+	ele.addEventListener('ended', function(){
+		if(typeof endCB=='function'){
+			endCB.call(this)
+		}
 	})
 	document.body.appendChild(ele)
 	ele.play()

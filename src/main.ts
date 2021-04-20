@@ -1,4 +1,5 @@
 import './style/index.less'
 import './js/index.ts'
 import '/assets/down.mp3'
-console.log(333)
+import '/assets/canon.mp3'
+import '/assets/great.mp3'

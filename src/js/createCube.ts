@@ -3,11 +3,11 @@ import * as THREE from 'three';
 import { Tween } from '@tweenjs/tween.js'
 import { CubeProperty, XYZObj } from './interfaceAndClass'
 import { Box3, Mesh, SpotLight, Vector3 } from 'three';
-import {getGradientColor,addMusic} from './utils'
+import { getGradientColor, addMusic } from './utils'
 let tween: Tween<XYZObj>;//记录当前点击时需要暂停的动画
 let _scen: THREE.Scene
 let _camera: THREE.Camera
-let _SpotLight:SpotLight
+let _SpotLight: SpotLight
 let lookAt: Vector3 = new Vector3(0, 4, 0);
 
 let isStart: number = 0
@@ -31,6 +31,7 @@ mask.addEventListener('mousedown', (event: any) => {
 	event = event || window.event;
 	if (event.buttons == 1) {
 		if (isStart++ == 0) {
+			addMusic('/assets/canon.mp3',true,.8)
 			let originPositionParam: XYZObj = new XYZObj(0, 0, 0)
 			let originCubeProperty: CubeProperty = new CubeProperty(3, 1, 3, 'z')
 			ctr(originPositionParam, originCubeProperty)
@@ -50,7 +51,7 @@ let ctr = (function () {
 	let flag: boolean = false;
 	let cubeQuque: THREE.Mesh[] = [];//储存顶部的立方体
 	function dfs(pos: XYZObj, cubeSize: CubeProperty): void {
-		cubeSize.color=getGradientColor();
+		cubeSize.color = getGradientColor();
 		//创建第一层
 		if (cubeQuque.length == 0) {
 			cubeQuque.push(createCubeAddSecen(pos, cubeSize));
@@ -80,12 +81,12 @@ let ctr = (function () {
 				let _cameraPos = { y: 0 }
 				let o_y = _camera.position.y
 				let l_y = lookAt.y
-				let light_y=_SpotLight.position.y
+				let light_y = _SpotLight.position.y
 				let tween = new Tween(_cameraPos).to({ y: cubeSize.y }, time / 4)
 					.onUpdate(() => {
 						_camera.position.y = o_y + _cameraPos.y
 						lookAt.y = l_y + _cameraPos.y;
-						_SpotLight.position.y=light_y+ _cameraPos.y;
+						_SpotLight.position.y = light_y + _cameraPos.y;
 						_camera.lookAt(lookAt)
 					})
 				tween.start()
@@ -242,15 +243,20 @@ function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: THREE.Mesh[])
 	if (distanceDiff < 0) {
 		w = -w;
 	}
-	if (Math.abs(distanceDiff) <0.15) {
+	if (Math.abs(distanceDiff) < 0.15) {
+		addMusic('/assets/great.mp3', false, 1, function () {
+			document.body.removeChild(this)
+		})
 		//两个方块完美重叠
-		let peek:Mesh=cubeQuque[cubeQuque.length-1];
-		peek.position[cubesize.dir]=peekPos[cubesize.dir]
-		return [new XYZObj(peek.position.x,peek.position.y,peek.position.z), cubesize]
+		let peek: Mesh = cubeQuque[cubeQuque.length - 1];
+		peek.position[cubesize.dir] = peekPos[cubesize.dir]
+		return [new XYZObj(peek.position.x, peek.position.y, peek.position.z), cubesize]
 	}
 	_scen.remove(cubeQuque.pop());
 	if (Math.abs(distanceDiff) >= cubesize[key]) return false;//两个方块不相交
-	addMusic()
+	addMusic('/assets/down.mp3', false, 1, function () {
+		document.body.removeChild(this)
+	})
 	//  交叉 (x1+x2)/2
 	// 多余的部分 (x1+x2)/2  +(-) w  由新cube与旧cube相对位置决定
 
@@ -280,14 +286,14 @@ function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: THREE.Mesh[])
 }
 function ggGame() {
 	let ggtext = <HTMLElement>document.querySelector('#ggtext');
-	ggtext.textContent = '最后得分：' + score	
-	ggbox.style.display='flex'
+	ggtext.textContent = '最后得分：' + score
+	ggbox.style.display = 'flex'
 }
 
-export function createGame(scene: THREE.Scene, camera: THREE.Camera,light:THREE.SpotLight) {
+export function createGame(scene: THREE.Scene, camera: THREE.Camera, light: THREE.SpotLight) {
 	_scen = scene;
 	_camera = camera;
-	_SpotLight=light
+	_SpotLight = light
 
 }
 
