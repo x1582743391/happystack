@@ -1,18 +1,17 @@
-import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js'
 import { createGame} from './createCube'
-import { Vector3 } from 'three';
+import { AmbientLight, Color, PerspectiveCamera, Scene, SpotLight, Vector3, WebGLRenderer } from 'three';
 
 window.focus();
 // create a scene, that will hold all our elements such as objects, cameras and lights.
-const scene: THREE.Scene = new THREE.Scene();
+const scene: Scene = new Scene();
 
 // create a camera, which defines where we're looking at.
-const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(10, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera: PerspectiveCamera = new PerspectiveCamera(10, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 // create a render and set the size
-const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
-renderer.setClearColor(new THREE.Color('0xffffff'));
+const renderer: WebGLRenderer = new WebGLRenderer();
+renderer.setClearColor(new Color('0xffffff'));
 renderer.setClearAlpha(0.1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
@@ -24,11 +23,11 @@ renderer.shadowMap.enabled = true;
 camera.position.set(-60, 50, 60);
 camera.lookAt(new Vector3(0,4,0));
 // add subtle ambient lighting
-var ambienLight = new THREE.AmbientLight(0x353535);
+var ambienLight = new AmbientLight(0x353535);
 scene.add(ambienLight);
 
 // add spotlight for the shadows
-var spotLight = new THREE.SpotLight(0xffffff);
+var spotLight = new SpotLight(0xffffff);
 spotLight.position.set(-10, 20, -5);
 spotLight.castShadow = true;
 scene.add(spotLight);

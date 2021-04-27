@@ -1,13 +1,12 @@
 
-import * as THREE from 'three';
 import { Tween } from '@tweenjs/tween.js'
 import { CubeProperty, XYZObj } from './interfaceAndClass'
-import { Box3, Mesh, SpotLight, Vector3 } from 'three';
+import { Box3, BoxGeometry, Camera, Mesh, MeshLambertMaterial, Scene, SpotLight, Vector3 } from 'three';
 import { getGradientColor, addMusic } from './utils'
 
 let tween: Tween<XYZObj>;//记录当前点击时需要暂停的动画
-let _scen: THREE.Scene
-let _camera: THREE.Camera
+let _scen: Scene
+let _camera: Camera
 let _SpotLight: SpotLight
 let lookAt: Vector3 = new Vector3(0, 4, 0);
 
@@ -32,7 +31,7 @@ mask.addEventListener('mousedown', (event: any) => {
 	event = event || window.event;
 	if (event.buttons == 1) {
 		if (isStart++ == 0) {
-			addMusic(require('/assets/canon.mp3'),true,.8)
+			addMusic(require('/assets/canon.mp3'), true, .8)
 			let originPositionParam: XYZObj = new XYZObj(0, 0, 0)
 			let originCubeProperty: CubeProperty = new CubeProperty(3, 1, 3, 'z')
 			ctr(originPositionParam, originCubeProperty)
@@ -50,7 +49,7 @@ btn.addEventListener('mousedown', (event: any) => {
 
 let ctr = (function () {
 	let flag: boolean = false;
-	let cubeQuque: THREE.Mesh[] = [];//储存顶部的立方体
+	let cubeQuque: Mesh[] = [];//储存顶部的立方体
 	function dfs(pos: XYZObj, cubeSize: CubeProperty): void {
 		cubeSize.color = getGradientColor();
 		//创建第一层
@@ -68,7 +67,7 @@ let ctr = (function () {
 			target = 10;
 			cubeSize.dir = 'z';
 		}
-		let cube: THREE.Mesh = createCubeAddSecen(pos, cubeSize);
+		let cube: Mesh = createCubeAddSecen(pos, cubeSize);
 		let time = Math.abs(pos[cubeSize.dir] - target) / move_V
 		let cb = () => {
 			let isOk = splitCube(pos, cubeSize, cubeQuque);
@@ -102,20 +101,20 @@ let ctr = (function () {
 	return dfs
 })()
 
-function createCube(pos: XYZObj, cubesize: CubeProperty): THREE.Mesh {
-	let boxGeometry: THREE.BoxGeometry = new THREE.BoxGeometry(cubesize.x, cubesize.y, cubesize.z);
-	let basicMaterial: THREE.MeshLambertMaterial = new THREE.MeshLambertMaterial({ color: cubesize.color || '000000' });
-	let cube: THREE.Mesh = new THREE.Mesh(boxGeometry, basicMaterial);
+function createCube(pos: XYZObj, cubesize: CubeProperty): Mesh {
+	let boxGeometry: BoxGeometry = new BoxGeometry(cubesize.x, cubesize.y, cubesize.z);
+	let basicMaterial: MeshLambertMaterial = new MeshLambertMaterial({ color: cubesize.color || '000000' });
+	let cube: Mesh = new Mesh(boxGeometry, basicMaterial);
 	cube.position.set(pos.x, pos.y, pos.z);
 	cube.castShadow = true;
 	return cube;
 }
-function createCubeAddSecen(pos: XYZObj, cubesize: CubeProperty): THREE.Mesh {
+function createCubeAddSecen(pos: XYZObj, cubesize: CubeProperty): Mesh {
 	let cube = createCube(pos, cubesize)
 	_scen.add(cube)
 	return cube
 }
-function bindAnimation(pos: XYZObj, cube: THREE.Mesh, dir: 'x' | 'y' | 'z', cb?: Function, target: number = 0, delay: number = 4500): any {
+function bindAnimation(pos: XYZObj, cube: Mesh, dir: 'x' | 'y' | 'z', cb?: Function, target: number = 0, delay: number = 4500): any {
 	tween = new Tween(pos).to({ [dir]: target }, delay);
 	cb = cb || function () { };
 	tween.onComplete(() => {
@@ -131,14 +130,14 @@ function bindAnimation(pos: XYZObj, cube: THREE.Mesh, dir: 'x' | 'y' | 'z', cb?:
 	return tween;
 }
 let splitCubeDown = (function () {
-	let xQueue: THREE.Mesh[][] = [[], []]
-	let zQueue: THREE.Mesh[][] = [[], []]
-	let add2opposite = (dir: string, diff: number, cube: THREE.Mesh): void => {
+	let xQueue: Mesh[][] = [[], []]
+	let zQueue: Mesh[][] = [[], []]
+	let add2opposite = (dir: string, diff: number, cube: Mesh): void => {
 		let index: number = diff > 0 ? 1 : 0;
 		let arr = (dir == 'x' ? xQueue : zQueue)[index];//另一个方向切割块数组
 		arr.push(cube)
 	}
-	let dfs = (cubesize: CubeProperty, cube: THREE.Mesh, diff: number, level?: number): void => {
+	let dfs = (cubesize: CubeProperty, cube: Mesh, diff: number, level?: number): void => {
 		let index: number = diff > 0 ? 0 : 1;
 		let arr = (cubesize.dir == 'x' ? xQueue : zQueue)[index];//当前方向的切割块数组
 		let key = cubesize.dir
@@ -221,24 +220,24 @@ let splitCubeDown = (function () {
 			})
 		tween.start()
 	}
-	return function (cubesize: CubeProperty, cube: THREE.Mesh, diff: number, otherPos: XYZObj) {
+	return function (cubesize: CubeProperty, cube: Mesh, diff: number, otherPos: XYZObj) {
 		let mid = { ...cubesize }
 		mid.color = 'yellow'
-		let otherCube: THREE.Mesh = createCube(otherPos, mid);
+		let otherCube: Mesh = createCube(otherPos, mid);
 		add2opposite(cubesize.dir, diff, otherCube);
 		dfs(cubesize, cube, diff)
 	}
 })()
-function getCubeSize(cube: THREE.Mesh): THREE.Vector3 {
-	let ans = new THREE.Vector3();
+function getCubeSize(cube: Mesh): Vector3 {
+	let ans = new Vector3();
 	new Box3().setFromObject(cube).getSize(ans);
 	return ans
 }
 
 // 计算当点击后cube的分割情况.如果返回了布尔值，说明了此时方块不相交。其他时候返回保留的位置信息和属性信息
-function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: THREE.Mesh[]): [XYZObj, CubeProperty] | boolean {
+function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: Mesh[]): [XYZObj, CubeProperty] | boolean {
 	let key = cubesize.dir;
-	let peekPos: THREE.Vector3 = cubeQuque[cubeQuque.length - 2].position;
+	let peekPos: Vector3 = cubeQuque[cubeQuque.length - 2].position;
 	let w: number = cubesize[key] / 2;
 	let distanceDiff: number = pos[key] - peekPos[key];
 	if (distanceDiff < 0) {
@@ -268,7 +267,7 @@ function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: THREE.Mesh[])
 	let intersectSize: CubeProperty = { ...cubesize };
 	intersectSize[key] = cubesize[key] - Math.abs(distanceDiff);//该移动方向上的新尺寸
 	// intersectSize.color = 'red'
-	let intersectCube: THREE.Mesh = createCubeAddSecen(intersectPos, intersectSize);
+	let intersectCube: Mesh = createCubeAddSecen(intersectPos, intersectSize);
 
 	cubeQuque.push(intersectCube);
 
@@ -277,7 +276,7 @@ function splitCube(pos: XYZObj, cubesize: CubeProperty, cubeQuque: THREE.Mesh[])
 	downPos[key] = sum / 2 + w;
 	let downSize: CubeProperty = { ...cubesize };
 	downSize[key] = Math.abs(distanceDiff);
-	let downCube: THREE.Mesh = createCubeAddSecen(downPos, downSize);
+	let downCube: Mesh = createCubeAddSecen(downPos, downSize);
 
 	let otherPos: XYZObj = { ...pos }
 	otherPos[key] = sum / 2 - w;
@@ -291,7 +290,7 @@ function ggGame() {
 	ggbox.style.display = 'flex'
 }
 
-export function createGame(scene: THREE.Scene, camera: THREE.Camera, light: THREE.SpotLight) {
+export function createGame(scene: Scene, camera: Camera, light: SpotLight) {
 	_scen = scene;
 	_camera = camera;
 	_SpotLight = light
