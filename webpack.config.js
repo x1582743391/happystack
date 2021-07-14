@@ -9,13 +9,13 @@ module.exports = {
     },
     output: {
         filename: 'js/[name]-[hash:5].js',
-        path: resolve(__dirname, 'dist'),
+        path: resolve(__dirname, 'doc'),
         assetModuleFilename:'assets/[name][ext][query]',
         clean: true
     },
     // webpack-dev-server need webpack-dev-server plugin
     devServer: {
-        contentBase: resolve(__dirname, 'dist'),
+        contentBase: resolve(__dirname, 'doc'),
         // 设置端口
         port: 1300,
         open: true,
